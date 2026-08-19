@@ -1,4 +1,4 @@
-FROM node:lts-alpine as mmPlayer_builder
+FROM node:lts-alpine AS mmplayer_builder
 
 # install dependencies and build tools
 RUN apk update && apk add --no-cache wget curl git zip
@@ -20,7 +20,7 @@ RUN apk update && apk add --no-cache bash wget curl git nginx unzip
 
 WORKDIR /app
 
-COPY --from=mmPlayer_builder /app/Vue-mmPlayer/dist.zip ./
+COPY --from=mmplayer_builder /app/Vue-mmPlayer/dist.zip ./
 RUN unzip dist.zip && rm -rf dist.zip
 
 ADD default.conf /etc/nginx/http.d/
