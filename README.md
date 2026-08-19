@@ -58,6 +58,54 @@ docker run --name mm_player --restart always -d -p 32108:80 vue-mmplayer
 - 若 80 端口可用，可直接 `-p 80:80`。
 - `-v /mnt/music:/data` 用于挂载本地音乐，纯在线播放不需要。
 
+## 镜像部署
+
+镜像由 GitHub Actions 自动构建并推送到 Docker Hub（见 [.github/workflows/docker-image.yml](.github/workflows/docker-image.yml)），镜像名为 `imno9999/mmplayer:main`。
+
+### 拉取并运行
+
+```bash
+docker pull imno9999/mmplayer:main
+docker run --name mm_player --restart always -d -p 32108:80 imno9999/mmplayer:main
+```
+
+访问 `http://<服务器IP>:32108`。端口 `32108:80` 即宿主机 32108 → 容器内 nginx 的 80；若 80 未被封可改成 `-p 80:80`。
+
+### 更新镜像
+
+workflow 重新构建推送后，重新拉取并重建容器：
+
+```bash
+docker pull imno9999/mmplayer:main
+docker rm -f mm_player
+docker run --name mm_player --restart always -d -p 32108:80 imno9999/mmplayer:main
+```
+
+### 常用命令
+
+```bash
+docker logs -f mm_player   # 查看日志
+docker stop mm_player      # 停止
+docker start mm_player     # 启动
+```
+
+### docker-compose（推荐）
+
+存为 `docker-compose.yml`，用 `docker compose up -d` 一条命令部署/更新：
+
+```yaml
+services:
+  mmplayer:
+    image: imno9999/mmplayer:main
+    container_name: mm_player
+    restart: always
+    ports:
+      - "32108:80"
+    # 挂载本地音乐（可选，纯在线播放不需要）
+    # volumes:
+    #   - /mnt/music:/data
+```
+
 ## 架构兼容性
 
 - 基础镜像 `node:lts-alpine` 是多架构镜像（支持 `amd64`、`arm64`），但 **Node 官方已停发 32 位 `arm/v7`**，老 32 位树莓派系统无法构建。
