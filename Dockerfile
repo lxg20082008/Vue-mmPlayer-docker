@@ -1,14 +1,11 @@
 FROM node:lts-alpine as mmPlayer_builder
 
-# Maintainer
-LABEL maintainer="Crazyrico Open Source Software <crazyrico@qq.com>"
-
 # install dependencies and build tools
 RUN apk update && apk add --no-cache wget curl git zip
 
 WORKDIR /app
 
-RUN git clone --recurse-submodules https://github.com/wujiyu115/Vue-mmPlayer.git
+RUN git clone --recurse-submodules https://github.com/lxg20082008/Vue-mmPlayer.git
 
 RUN cd Vue-mmPlayer \
 	&& echo 'VUE_APP_BASE_API_URL = /api' > .env \
