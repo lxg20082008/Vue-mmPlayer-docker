@@ -60,8 +60,8 @@ docker run --name mm_player --restart always -d -p 32108:80 vue-mmplayer
 
 ## 架构兼容性
 
-- 基础镜像 `node:lts-alpine` 是多架构镜像，**x86_64 与 ARM（树莓派）均可**构建运行。
-- workflow 已配置多架构构建：`linux/amd64`、`linux/arm64`、`linux/arm/v7`，推送到 Docker Hub 时会同时产出三种架构的镜像。
+- 基础镜像 `node:lts-alpine` 是多架构镜像（支持 `amd64`、`arm64`），但 **Node 官方已停发 32 位 `arm/v7`**，老 32 位树莓派系统无法构建。
+- 当前 workflow 只构建 `linux/amd64`（x86_64）。
 - 前端使用 `@vue/cli-service ~5.0.8`（webpack 5），在新版 Node 上构建**不会**遇到老 webpack4 的 `openssl-legacy-provider` 报错。
 
 ## 版本
