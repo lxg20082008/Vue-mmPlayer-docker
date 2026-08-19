@@ -25,7 +25,7 @@ RUN unzip dist.zip && rm -rf dist.zip
 
 ADD default.conf /etc/nginx/http.d/
 
-RUN cd /app && git clone https://github.com/wujiyu115/NeteaseCloudMusicApi.git
+RUN cd /app && git clone https://github.com/lxg20082008/NeteaseCloudMusicApi.git
 
 RUN cd NeteaseCloudMusicApi \
 	&& npm config set registry "https://registry.npmmirror.com/" \

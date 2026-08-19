@@ -7,9 +7,9 @@
 | 部分 | 使用仓库 | 说明 |
 | :--- | :--- | :--- |
 | 前端 | [lxg20082008/Vue-mmPlayer](https://github.com/lxg20082008/Vue-mmPlayer) | fork 自上游 maomao1996，紧跟最新版，仅多一处 `src/App.vue` 标题改动（「听吧!唱吧!」提示语） |
-| 后端 | [wujiyu115/NeteaseCloudMusicApi](https://github.com/wujiyu115/NeteaseCloudMusicApi) | fork 自上游 Binaryify，维护最勤，**默认端口已改为 5001** |
+| 后端 | [lxg20082008/NeteaseCloudMusicApi](https://github.com/lxg20082008/NeteaseCloudMusicApi) | fork 自 wujiyu115，**默认端口 5001**；lock 文件已把淘宝镜像换成 npmmirror，避免证书过期 |
 
-> 为什么这么选：原来的 `wujiyu115/Vue-mmPlayer` 前端是旧 webpack 4 架构、与上游严重分叉（ahead 131 / behind 125），故前端改用 lxg 的最新版；后端方面 lxg 与 wujiyu 是父子关系、只差 1~2 个提交，选维护更勤的 wujiyu。
+> 为什么这么选：原来的 `wujiyu115/Vue-mmPlayer` 前端是旧 webpack 4 架构、与上游严重分叉（ahead 131 / behind 125），故前端改用 lxg 的最新版；后端方面 lxg 与 wujiyu 是父子关系、只差 1~2 个提交，但 **wujiyu 的 `package-lock.json` 主下载地址仍指向已关停的淘宝镜像 `registry.npm.taobao.org`（证书过期，`npm install` 报 `CERT_HAS_EXPIRED`），而 lxg 已通过提交「修改淘宝npm镜像源」全部换成 npmmirror**，所以后端选 lxg。
 
 ## 架构：为什么是单容器
 
