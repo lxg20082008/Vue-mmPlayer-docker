@@ -38,6 +38,9 @@ ADD check.sh ./
 
 RUN chmod +x /app/NeteaseCloudMusicApi/*.sh
 
+# 后端监听 0.0.0.0，供 ha_cloud_music 通过宿主机端口 32100 访问
+ENV HOST=0.0.0.0
+
 EXPOSE 80 443 5001
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
