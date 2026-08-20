@@ -16,10 +16,10 @@
 单个容器内同时运行三部分，由 `docker-entrypoint.sh` 启动：
 
 - **nginx**：提供前端静态文件（`dist`），并把 `/api/*` 反代给后端
-- **NeteaseCloudMusicApi**：`node app.js`，默认监听 `127.0.0.1:5001`
+- **NeteaseCloudMusicApi**：`node app.js`，监听 `0.0.0.0:5001`（`ENV HOST=0.0.0.0`）
 - **check.sh**：每 30 秒检测后端进程，挂了自动拉起
 
-关键原因：后端默认绑定 `127.0.0.1`，在**同一个容器**里 nginx 用 `localhost:5001` 就能直连；若拆成两个容器，反而要额外设 `HOST=0.0.0.0` 并改 `proxy_pass` 为服务名。因此单容器最省事、最稳。
+单容器里 nginx 和后端同处一个网络命名空间，nginx 用 `localhost:5001` 直连后端即可；后端又监听 `0.0.0.0`，可经宿主机端口 32100 暴露给 ha_cloud_music 等外部组件**复用同一个后端**——一个后端，服务网页播放器和 HA 云音乐组件两处。
 
 ## 请求链路与端口
 
@@ -50,8 +50,8 @@ docker build -t vue-mmplayer .
 ## 运行
 
 ```bash
-# 映射到宿主机 32108（80 端口被封时用非 80 端口）
-docker run --name mm_player --restart always -d -p 32108:80 vue-mmplayer
+# 映射到宿主机 32108（前端）和 32100（后端，供 ha_cloud_music 复用）
+docker run --name mm_player --restart always -d -p 32108:80 -p 32100:5001 vue-mmplayer
 ```
 
 访问 `http://<服务器IP>:32108`。
@@ -67,7 +67,7 @@ docker run --name mm_player --restart always -d -p 32108:80 vue-mmplayer
 
 ```bash
 docker pull imno9999/mmplayer:main
-docker run --name mm_player --restart always -d -p 32108:80 imno9999/mmplayer:main
+docker run --name mm_player --restart always -d -p 32108:80 -p 32100:5001 imno9999/mmplayer:main
 ```
 
 访问 `http://<服务器IP>:32108`。端口 `32108:80` 即宿主机 32108 → 容器内 nginx 的 80；若 80 未被封可改成 `-p 80:80`。
@@ -79,7 +79,7 @@ workflow 重新构建推送后，重新拉取并重建容器：
 ```bash
 docker pull imno9999/mmplayer:main
 docker rm -f mm_player
-docker run --name mm_player --restart always -d -p 32108:80 imno9999/mmplayer:main
+docker run --name mm_player --restart always -d -p 32108:80 -p 32100:5001 imno9999/mmplayer:main
 ```
 
 ### 常用命令
@@ -102,6 +102,7 @@ services:
     restart: always
     ports:
       - "32108:80"
+      - "32100:5001"
     # 挂载本地音乐（可选，纯在线播放不需要）
     # volumes:
     #   - /mnt/music:/data
